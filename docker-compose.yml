@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+
+  price_generator:
+    image: price_generator
+    environment:
+      REDIS_ADDR: "redis:6379"
+
+  price_service:
+    image: price_service
+    environment:
+      REDIS_ADDR: "redis:6379"
+    ports:
+      - "8082:8082"
+
+  client:
+    image: client
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"

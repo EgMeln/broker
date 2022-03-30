@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package protobuf;
+
+option go_package = "./protocol";
+
+message Price {
+  string ID = 1;
+  string symbol = 2;
+  float bid = 3;
+  float ask = 4;
+  string time = 5;
+}
+
+service PriceService{
+  rpc GetPrice(GetRequest) returns (stream GetResponse){}
+}
+message GetRequest {
+  repeated string symbol = 1;
+}
+message GetResponse {
+  Price price = 1;
+}
