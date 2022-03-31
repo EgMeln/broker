@@ -54,23 +54,19 @@ func main() {
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
 	<-c
+	log.Info("END")
 	cancel()
 }
 
 func runGRPC(priceServer *server.PriceServer) {
-	listener, err := net.Listen("tcp", "localhost:8082")
+	listener, err := net.Listen("tcp", ":8089")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	grpcServer := grpc.NewServer()
 	protocol.RegisterPriceServiceServer(grpcServer, priceServer)
 	log.Printf("server listening at %v", listener.Addr())
-	err = grpcServer.Serve(listener)
-	if err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
-	err = grpcServer.Serve(listener)
-	if err != nil {
+	if err = grpcServer.Serve(listener); err != nil {
 		log.Fatalf("connect grpc error %v", err)
 	}
 }

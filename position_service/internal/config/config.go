@@ -6,9 +6,9 @@ type Config struct {
 	DB             string `env:"DB" envDefault:"postgres"`
 	User           string `env:"USER" envDefault:"egormelnikov"`
 	Password       string `env:"PASSWORD" envDefault:"54236305"`
-	Host           string `env:"HOST" envDefault:"postgresql"`
+	Host           string `env:"HOST" envDefault:"postgres"`
 	PortPostgres   int    `env:"PORT" envDefault:"5432"`
-	DBNamePostgres string `env:"DBNAMEPOSTGRES" envDefault:"egormelnikov"`
+	DBNamePostgres string `env:"DBNAMEPOSTGRES" envDefault:"egormelnikovdb"`
 	DBURL          string `env:"DBURL" envDefault:""`
 }
 

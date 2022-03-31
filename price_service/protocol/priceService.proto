@@ -16,7 +16,7 @@ service PriceService{
   rpc GetPrice(GetRequest) returns (stream GetResponse){}
 }
 message GetRequest {
-  repeated string symbol = 1;
+  string symbol = 1;
 }
 message GetResponse {
   Price price = 1;

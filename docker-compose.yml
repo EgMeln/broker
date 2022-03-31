@@ -13,6 +13,12 @@ services:
       REDIS_ADDR: "redis:6379"
     ports:
       - "8082:8082"
+  position_service:
+    image: position_service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - price_service
 
   client:
     image: client
@@ -20,3 +26,11 @@ services:
     image: redis
     ports:
       - "6379:6379"
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: "egormelnikovdb"
+      POSTGRES_USER: "egormelnikov"
+      POSTGRES_PASSWORD: "54236305"
+    ports:
+      - "5444:5432"

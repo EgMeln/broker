@@ -17,7 +17,7 @@ func NewPriceServer(mu *sync.RWMutex, priceMap *map[string]*model.GeneratedPrice
 }
 
 func (priceServ *PriceServer) GetPrice(in *protocol.GetRequest, stream protocol.PriceService_GetPriceServer) error {
-	key := in.Symbol[0]
+	key := in.Symbol
 	for {
 		select {
 		case <-stream.Context().Done():
