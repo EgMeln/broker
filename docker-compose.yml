@@ -14,6 +14,7 @@ services:
     ports:
       - "8082:8082"
   position_service:
+
     image: position_service
     ports:
       - "8083:8083"
@@ -22,6 +23,10 @@ services:
 
   client:
     image: client
+    depends_on:
+      - price_service
+      - position_service
+
   redis:
     image: redis
     ports:

@@ -3,7 +3,7 @@ module github.com/EgMeln/broker/position_service
 go 1.17
 
 require (
-	github.com/EgMeln/broker/price_service v0.0.0-20220330140003-f5d9e94b8d60
+	github.com/EgMeln/broker/price_service v0.0.0-20220331105125-06a0a0049356
 	github.com/caarlos0/env/v6 v6.9.1
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v4 v4.15.0

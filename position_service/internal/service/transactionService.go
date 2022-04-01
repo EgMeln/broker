@@ -19,6 +19,6 @@ func (src *PositionService) OpenPosition(ctx context.Context, trans *model.Trans
 	return src.rep.OpenPosition(ctx, trans)
 }
 
-func (src *PositionService) ClosePosition(ctx context.Context, closePrice *float64, id *uuid.UUID) error {
+func (src *PositionService) ClosePosition(ctx context.Context, closePrice *float64, id *uuid.UUID) (string, error) {
 	return src.rep.ClosePosition(ctx, closePrice, id)
 }

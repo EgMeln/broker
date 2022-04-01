@@ -38,13 +38,9 @@ func main() {
 
 	transactionMap := map[string]*model.GeneratedPrice{}
 
-	str := []string{"Akron", "Aeroflot", "ALROSA"}
-
-	log.Info(str)
-
 	connectionPriceServer := connectPriceServer()
 
-	go subscribePrices(str, connectionPriceServer, mu, transactionMap)
+	go subscribePrices("ALROSA", connectionPriceServer, mu, transactionMap)
 
 	transactionService := service.NewPositionService(&repository.PostgresPrice{PoolPrice: pool})
 
@@ -84,12 +80,11 @@ func connectPostgres(URL string) *pgxpool.Pool {
 	return pool
 }
 func runGRPC(recServer protocol.PositionServiceServer) error {
-	port := "localhost:8083"
+	port := ":8083"
 	listener, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-
 	grpcServer := grpc.NewServer()
 	protocol.RegisterPositionServiceServer(grpcServer, recServer)
 	log.Printf("server listening at %v", listener.Addr())
@@ -99,7 +94,7 @@ func runGRPC(recServer protocol.PositionServiceServer) error {
 	return grpcServer.Serve(listener)
 }
 
-func subscribePrices(symbol []string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice) {
+func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice) {
 	req := protocolPrice.GetRequest{Symbol: symbol}
 	stream, err := client.GetPrice(context.Background(), &req)
 	if err != nil {

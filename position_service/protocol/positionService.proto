@@ -31,5 +31,6 @@ message CloseRequest{
   float PriceClose = 2;
 }
 message CloseResponse{
-  string Error = 1;
+  string Result = 1;
+  string Error = 2;
 }

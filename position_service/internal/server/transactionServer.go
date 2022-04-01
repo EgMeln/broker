@@ -6,6 +6,7 @@ import (
 	"github.com/EgMeln/broker/position_service/internal/service"
 	"github.com/EgMeln/broker/position_service/protocol"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"sync"
 )
 
@@ -27,6 +28,7 @@ func (srv *PositionServer) OpenPositionAsk(ctx context.Context, in *protocol.Ope
 		IsBay:     true,
 		Symbol:    in.Trans.Symbol,
 	}
+	log.Info(position)
 	id, err := srv.posService.OpenPosition(ctx, &position)
 	if err != nil {
 		return nil, err
@@ -52,20 +54,20 @@ func (srv *PositionServer) ClosePositionAsk(ctx context.Context, in *protocol.Cl
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
-	err = srv.posService.ClosePosition(ctx, &(*srv.generatedMap)[in.Symbol].Ask, &id)
+	result, err := srv.posService.ClosePosition(ctx, &(*srv.generatedMap)[in.Symbol].Ask, &id)
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
-	return &protocol.CloseResponse{}, nil
+	return &protocol.CloseResponse{Result: result}, nil
 }
 func (srv *PositionServer) ClosePositionBid(ctx context.Context, in *protocol.CloseRequest) (*protocol.CloseResponse, error) {
 	id, err := uuid.Parse(in.ID)
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
-	err = srv.posService.ClosePosition(ctx, &(*srv.generatedMap)[in.Symbol].Bid, &id)
+	result, err := srv.posService.ClosePosition(ctx, &(*srv.generatedMap)[in.Symbol].Bid, &id)
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
-	return &protocol.CloseResponse{}, nil
+	return &protocol.CloseResponse{Result: result}, nil
 }

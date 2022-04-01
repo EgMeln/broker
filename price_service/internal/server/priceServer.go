@@ -4,6 +4,7 @@ import (
 	"github.com/EgMeln/broker/price_service/internal/model"
 	"github.com/EgMeln/broker/price_service/protocol"
 	"sync"
+	"time"
 )
 
 type PriceServer struct {
@@ -31,6 +32,7 @@ func (priceServ *PriceServer) GetPrice(in *protocol.GetRequest, stream protocol.
 			if err != nil {
 				return err
 			}
+			time.Sleep(3 * time.Second)
 		}
 	}
 }

@@ -1,8 +1,8 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/EgMeln/broker/price_service v0.0.0-20220330140003-f5d9e94b8d60 h1:GOi4LYBhO8Z7iyBQ/C5MJ30OuVRVPczWCE67T6slR6Q=
-github.com/EgMeln/broker/price_service v0.0.0-20220330140003-f5d9e94b8d60/go.mod h1:EdCM/7lHgjxv/Dt8vHafq2v0eKUy2sA0soJrrX/df8A=
+github.com/EgMeln/broker/price_service v0.0.0-20220331105125-06a0a0049356 h1:I8WhH2lk76zOy6ob3eLP8noVNP8mmoqGB7xgCOU6F/E=
+github.com/EgMeln/broker/price_service v0.0.0-20220331105125-06a0a0049356/go.mod h1:EdCM/7lHgjxv/Dt8vHafq2v0eKUy2sA0soJrrX/df8A=
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/caarlos0/env/v6 v6.9.1 h1:zOkkjM0F6ltnQ5eBX6IPI41UP/KDGEK7rRPwGCNos8k=

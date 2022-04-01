@@ -18,8 +18,8 @@ func main() {
 	if err != nil {
 		log.Fatalln("Config error: ", redisCfg)
 	}
-	redisClient := connRedis(redisCfg)
 
+	redisClient := connRedis(redisCfg)
 	gen := generate.NewGenerator()
 	prod := producer.NewRedis(redisClient)
 	serv := send.NewService(prod, gen)
