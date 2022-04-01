@@ -1,11 +1,8 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/EgMeln/broker/position_service v0.0.0-20220331105125-06a0a0049356 h1:QVPGr+EvHQOYZmx9lgLUWD5ORrey4QQfFBAFFx3m/Dk=
-github.com/EgMeln/broker/position_service v0.0.0-20220331105125-06a0a0049356/go.mod h1:gZ//Ct4dxfWCg9eA3bYI7yZTw0SvuXakI8xfcvrNHjQ=
-github.com/EgMeln/broker/position_service v0.0.0-20220401090054-3e183be82d1e h1:Qm1RgrM3TIDdm4Qd89lvw4qHeWzxOO9vMc1J428BhZg=
-github.com/EgMeln/broker/position_service v0.0.0-20220401090054-3e183be82d1e/go.mod h1:qzdGTffZ9wGqnJptfRPWyLbX2wiUEVVnsa1ZwpmA0SA=
-github.com/EgMeln/broker/price_service v0.0.0-20220330140003-f5d9e94b8d60/go.mod h1:EdCM/7lHgjxv/Dt8vHafq2v0eKUy2sA0soJrrX/df8A=
+github.com/EgMeln/broker/position_service v0.0.0-20220401114133-c74a3799a8f1 h1:0mW9soaGNfs4A5tJWjN8rfnsAP4nRi+pqWqVYF6Xy1E=
+github.com/EgMeln/broker/position_service v0.0.0-20220401114133-c74a3799a8f1/go.mod h1:qzdGTffZ9wGqnJptfRPWyLbX2wiUEVVnsa1ZwpmA0SA=
 github.com/EgMeln/broker/price_service v0.0.0-20220331105125-06a0a0049356 h1:I8WhH2lk76zOy6ob3eLP8noVNP8mmoqGB7xgCOU6F/E=
 github.com/EgMeln/broker/price_service v0.0.0-20220331105125-06a0a0049356/go.mod h1:EdCM/7lHgjxv/Dt8vHafq2v0eKUy2sA0soJrrX/df8A=
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=

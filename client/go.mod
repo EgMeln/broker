@@ -3,7 +3,7 @@ module github.com/EgMeln/broker/client
 go 1.17
 
 require (
-	github.com/EgMeln/broker/position_service v0.0.0-20220401090054-3e183be82d1e
+	github.com/EgMeln/broker/position_service v0.0.0-20220401114133-c74a3799a8f1
 	github.com/EgMeln/broker/price_service v0.0.0-20220331105125-06a0a0049356
 	github.com/google/uuid v1.3.0
 	github.com/sirupsen/logrus v1.8.1

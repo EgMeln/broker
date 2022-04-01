@@ -10,9 +10,7 @@ import (
 )
 
 func (rep *PostgresPrice) OpenPosition(ctx context.Context, trans *model.Transaction) (*uuid.UUID, error) {
-	row := rep.PoolPrice.QueryRow(ctx, "INSERT INTO positions(id_,price_open,is_bay,symbol,price_close) VALUES ($1,$2,$3,$4,$5)", trans.ID, trans.PriceOpen, true, trans.Symbol, trans.PriceClose)
-	err := row.Scan(trans.Symbol)
-	log.Info(trans.Symbol)
+	_, err := rep.PoolPrice.Exec(ctx, "INSERT INTO positions(id_,price_open,is_bay,symbol,price_close) VALUES ($1,$2,$3,$4,$5)", trans.ID, trans.PriceOpen, true, trans.Symbol, trans.PriceClose)
 	if err != nil {
 		log.Errorf("can't insert position %v", err)
 		return &trans.ID, err
