@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 )
 
 func main() {
@@ -23,13 +24,13 @@ func main() {
 
 	posClient := server.NewPositionServer(&priceMap, mute)
 
-	//log.Infof("Start open")
-	//id := posClient.OpenPositionAsk("ALROSA")
-	//
-	//time.Sleep(5 * time.Second)
+	log.Infof("Start open")
+	id := posClient.OpenPositionAsk("Aeroflot")
+
+	time.Sleep(5 * time.Second)
 
 	log.Infof("Start close")
-	posClient.ClosePositionAsk("fe673124-cab7-46a4-b5f9-8a8c24f5e37c", "ALROSA")
+	posClient.ClosePositionAsk(id, "Aeroflot")
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)

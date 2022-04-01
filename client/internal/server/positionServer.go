@@ -57,14 +57,14 @@ func (s *PositionServer) ClosePositionAsk(id, currency string) {
 	if err != nil {
 		log.Printf("Error while closing position: %v", err)
 	} else {
-		log.Printf("Position with id: %s closed", id)
+		log.Printf("Position with id: %s closed. Profit %v", id, res.Result)
 	}
 }
 func (s *PositionServer) ClosePositionBid(id, currency string) {
-	_, err := s.posService.ClosePositionBid(context.Background(), &protocolPosition.CloseRequest{ID: id, Symbol: currency, PriceClose: float32((*s.generatedMap)[currency].Bid)})
+	res, err := s.posService.ClosePositionBid(context.Background(), &protocolPosition.CloseRequest{ID: id, Symbol: currency, PriceClose: float32((*s.generatedMap)[currency].Bid)})
 	if err != nil {
 		log.Printf("Error while closing position: %v", err)
 	} else {
-		log.Printf("Position with id: %s closed", id)
+		log.Printf("Position with id: %s closed.Profit %v", id, res.Result)
 	}
 }

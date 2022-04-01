@@ -11,8 +11,8 @@ import (
 
 func (rep *PostgresPrice) OpenPosition(ctx context.Context, trans *model.Transaction) (*uuid.UUID, error) {
 	row := rep.PoolPrice.QueryRow(ctx, "INSERT INTO positions(id_,price_open,is_bay,symbol,price_close) VALUES ($1,$2,$3,$4,$5)", trans.ID, trans.PriceOpen, true, trans.Symbol, trans.PriceClose)
-	err := row.Scan(&trans.Symbol)
-	log.Info("tut bil")
+	err := row.Scan(trans.Symbol)
+	log.Info(trans.Symbol)
 	if err != nil {
 		log.Errorf("can't insert position %v", err)
 		return &trans.ID, err
@@ -33,10 +33,6 @@ func (rep *PostgresPrice) ClosePosition(ctx context.Context, closePrice *float64
 	var openPrice *float64
 	err = rep.PoolPrice.QueryRow(ctx, "SELECT price_open from positions where id_=$1", id).Scan(&openPrice)
 	var str string
-	if *openPrice > *closePrice {
-		str = fmt.Sprintf("profit: %v", *openPrice-*closePrice)
-	} else {
-		str = fmt.Sprintf("profit: %v", *closePrice-*openPrice)
-	}
+	str = fmt.Sprintf("profit: %v", *openPrice-*closePrice)
 	return str, err
 }

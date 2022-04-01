@@ -63,6 +63,6 @@ func (gen *Generator) GeneratePrices() {
 			DoteTime: time.Now().Format(timeFormat),
 		}
 		gen.Prices[key] = bid
-		log.Info((*gen).Prices[key].(string))
+		log.Info((*gen).Prices[key])
 	}
 }
