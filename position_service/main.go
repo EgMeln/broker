@@ -3,6 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
+	"net"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
+
 	"github.com/EgMeln/broker/position_service/internal/config"
 	"github.com/EgMeln/broker/position_service/internal/model"
 	"github.com/EgMeln/broker/position_service/internal/repository"
@@ -14,12 +21,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"io"
-	"net"
-	"os"
-	"os/signal"
-	"sync"
-	"syscall"
 )
 
 func main() {
@@ -40,11 +41,12 @@ func main() {
 
 	connectionPriceServer := connectPriceServer()
 
+	go subscribePrices("Aeroflot", connectionPriceServer, mu, transactionMap)
 	go subscribePrices("ALROSA", connectionPriceServer, mu, transactionMap)
 
 	transactionService := service.NewPositionService(&repository.PostgresPrice{PoolPrice: pool})
 
-	transactionServer := server.NewPositionServer(*transactionService, mu, &transactionMap)
+	transactionServer := server.NewPositionServer(*transactionService, mu, transactionMap)
 
 	err = runGRPC(transactionServer)
 
@@ -96,11 +98,12 @@ func runGRPC(recServer protocol.PositionServiceServer) error {
 
 func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice) {
 	req := protocolPrice.GetRequest{Symbol: symbol}
-	stream, err := client.GetPrice(context.Background(), &req)
-	if err != nil {
-		log.Fatalf("%v get price error, %v", client, err)
-	}
+
 	for {
+		stream, err := client.GetPrice(context.Background(), &req)
+		if err != nil {
+			log.Fatalf("%v get price error, %v", client, err)
+		}
 		in, err := stream.Recv()
 		if err == io.EOF {
 			return
@@ -108,7 +111,6 @@ func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu 
 		if err != nil {
 			log.Fatalf("Failed to receive a note : %v", err)
 		}
-
 		cur := &model.GeneratedPrice{Symbol: in.Price.Symbol, Ask: float64(in.Price.Ask), Bid: float64(in.Price.Bid), DoteTime: in.Price.Time}
 		mu.Lock()
 		transactionMap[cur.Symbol] = cur
@@ -116,5 +118,6 @@ func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu 
 
 		log.Infof("Got currency data Name: %v Ask: %v Bid: %v  at time %v",
 			in.Price.Symbol, in.Price.Ask, in.Price.Bid, in.Price.Time)
+		// time.Sleep(50 * time.Millisecond)
 	}
 }

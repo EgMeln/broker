@@ -2,21 +2,24 @@ package server
 
 import (
 	"context"
+	"io"
+	"sync"
+
 	"github.com/EgMeln/broker/client/internal/model"
 	protocolPrice "github.com/EgMeln/broker/price_service/protocol"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"io"
-	"sync"
 )
 
-type PriceServer struct {
-	mu           *sync.RWMutex
-	generatedMap *map[string]*model.GeneratedPrice
-	protocolPrice.PriceServiceClient
-}
+// PriceServer struct for grpc server logic
+//type PriceServer struct {
+//	mu           *sync.RWMutex
+//	generatedMap *map[string]*model.GeneratedPrice
+//	protocolPrice.PriceServiceClient
+//}
 
+// ConnectPriceServer for connect to grpc server
 func ConnectPriceServer() protocolPrice.PriceServiceClient {
 	addressGRPC := "price_service:8089"
 	con, err := grpc.Dial(addressGRPC, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
@@ -26,6 +29,8 @@ func ConnectPriceServer() protocolPrice.PriceServiceClient {
 
 	return protocolPrice.NewPriceServiceClient(con)
 }
+
+// SubscribePrices for get prices from grpc
 func SubscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice) {
 	req := protocolPrice.GetRequest{Symbol: symbol}
 	stream, err := client.GetPrice(context.Background(), &req)
@@ -46,7 +51,7 @@ func SubscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu 
 		transactionMap[cur.Symbol] = cur
 		mu.Unlock()
 
-		//log.Infof("Got currency data Name: %v Ask: %v Bid: %v  at time %v",
+		// log.Infof("Got currency data Name: %v Ask: %v Bid: %v  at time %v",
 		//	in.Price.Symbol, in.Price.Ask, in.Price.Bid, in.Price.Time)
 	}
 }

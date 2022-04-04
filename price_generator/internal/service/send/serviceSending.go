@@ -1,3 +1,4 @@
+// Package send to sending generated map to producer
 package send
 
 import (
@@ -34,7 +35,7 @@ func (serv *Service) StartSending(ctx context.Context) error {
 					log.Errorf("Error with sending message %v", err)
 					return
 				}
-				time.Sleep(1 * time.Second)
+				time.Sleep(10 * time.Millisecond)
 			}
 		}
 	}()

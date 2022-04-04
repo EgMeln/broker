@@ -2,15 +2,16 @@ package main
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/EgMeln/broker/price_generator/internal/config"
 	"github.com/EgMeln/broker/price_generator/internal/producer"
 	"github.com/EgMeln/broker/price_generator/internal/service/generate"
 	"github.com/EgMeln/broker/price_generator/internal/service/send"
 	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func main() {

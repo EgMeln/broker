@@ -1,7 +1,9 @@
+// Package config to env
 package config
 
 import "github.com/caarlos0/env/v6"
 
+// RedisConfig struct to redis config env
 type RedisConfig struct {
 	Addr     string `env:"ADDR_REDIS" envDefault:"redis:6379"`
 	Password string `env:"PASSWORD_REDIS" envDefault:""`
