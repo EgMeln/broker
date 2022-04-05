@@ -53,8 +53,8 @@ func (cons *Consumer) GetPrices(ctx context.Context) {
 				}
 				cons.mu.Lock()
 				cons.generatedMap[price.Symbol] = price
-				log.Info("Consumer ", cons.generatedMap[price.Symbol])
 				cons.mu.Unlock()
+				log.Info("Consumer ", cons.generatedMap[price.Symbol])
 			}
 		}
 	}

@@ -2,11 +2,12 @@
 package server
 
 import (
+	log "github.com/sirupsen/logrus"
 	"sync"
+	"time"
 
 	"github.com/EgMeln/broker/price_service/internal/model"
 	"github.com/EgMeln/broker/price_service/protocol"
-	log "github.com/sirupsen/logrus"
 )
 
 // PriceServer struct for grpc server logic
@@ -29,15 +30,16 @@ func (priceServ *PriceServer) GetPrice(in *protocol.GetRequest, stream protocol.
 		case <-stream.Context().Done():
 			return nil
 		default:
-			priceServ.mu.Lock()
+			priceServ.mu.RLock()
 			resp := priceServ.generatedMap[key]
-			priceServ.mu.Unlock()
+			priceServ.mu.RUnlock()
 			cur := protocol.Price{Symbol: resp.Symbol, Ask: float32(resp.Ask), Bid: float32(resp.Bid), ID: resp.ID.String(), Time: resp.DoteTime}
 			err := stream.Send(&protocol.GetResponse{Price: &cur})
 			log.Info("Server ", &cur)
 			if err != nil {
 				return err
 			}
+			time.Sleep(100 * time.Millisecond)
 		}
 	}
 }

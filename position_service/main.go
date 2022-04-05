@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/EgMeln/broker/position_service/internal/config"
 	"github.com/EgMeln/broker/position_service/internal/model"
@@ -43,6 +44,7 @@ func main() {
 
 	go subscribePrices("Aeroflot", connectionPriceServer, mu, transactionMap)
 	go subscribePrices("ALROSA", connectionPriceServer, mu, transactionMap)
+	go subscribePrices("Akron", connectionPriceServer, mu, transactionMap)
 
 	transactionService := service.NewPositionService(&repository.PostgresPrice{PoolPrice: pool})
 
@@ -98,8 +100,15 @@ func runGRPC(recServer protocol.PositionServiceServer) error {
 
 func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice) {
 	req := protocolPrice.GetRequest{Symbol: symbol}
-
+	i := 0
+	t := time.Now()
 	for {
+		if i == 10 {
+			i = 0
+			log.Info(time.Since(t))
+			time.Sleep(1 * time.Second)
+			t = time.Now()
+		}
 		stream, err := client.GetPrice(context.Background(), &req)
 		if err != nil {
 			log.Fatalf("%v get price error, %v", client, err)
@@ -118,6 +127,7 @@ func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu 
 
 		log.Infof("Got currency data Name: %v Ask: %v Bid: %v  at time %v",
 			in.Price.Symbol, in.Price.Ask, in.Price.Bid, in.Price.Time)
-		// time.Sleep(50 * time.Millisecond)
+		i++
+		time.Sleep(100 * time.Millisecond)
 	}
 }

@@ -49,7 +49,6 @@ func NewGenerator() *Generator {
 
 // GeneratePrices generates bid prices
 func (gen *Generator) GeneratePrices() {
-	//rand.Seed(time.Now().UnixNano())
 	for key, value := range gen.Prices {
 		a, err := rand.Int(rand.Reader, big.NewInt(2))
 		if err != nil {
@@ -57,14 +56,14 @@ func (gen *Generator) GeneratePrices() {
 		}
 		var coeff float64
 		if a.Int64() == 0 {
-			coeff = -0.1
+			coeff = 1.021
 		} else {
-			coeff = 0.1
+			coeff = 0.98
 		}
 		bid := &model.Price{
 			Symbol:   key,
-			Ask:      value.(*model.Price).Ask + coeff,
-			Bid:      value.(*model.Price).Bid + coeff,
+			Ask:      value.(*model.Price).Ask * coeff,
+			Bid:      value.(*model.Price).Bid * coeff,
 			DoteTime: time.Now().Format(timeFormat),
 		}
 		gen.Prices[key] = bid
