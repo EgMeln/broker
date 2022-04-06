@@ -35,6 +35,6 @@ func (rep *PostgresPrice) ClosePosition(ctx context.Context, closePrice *float64
 	}
 	var openPrice *float64
 	err = rep.PoolPrice.QueryRow(ctx, "SELECT price_open from positions where id_=$1", id).Scan(&openPrice)
-	str := fmt.Sprintf("profit: %v", *closePrice-*openPrice)
+	str := fmt.Sprintf("Position close: profit: %v", *closePrice-*openPrice)
 	return str, err
 }

@@ -27,17 +27,22 @@ func main() {
 	posClient := server.NewPositionServer(priceMap, mute)
 
 	log.Infof("Start open")
+	//id := posClient.OpenPositionAsk("Aeroflot")
+	//id2 := posClient.OpenPositionAsk("ALROSA")
+	//time.Sleep(5 * time.Minute)
+	//posClient.ClosePositionAsk(id, "Aeroflot")
+	//posClient.ClosePositionAsk(id2, "ALROSA")
 	t := time.Now()
 	var array []string
 	for i := 0; i < 1000; i++ {
 		id := posClient.OpenPositionAsk("Aeroflot")
 		array = append(array, id)
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 	}
 	time.Sleep(40 * time.Second)
 	for _, id := range array {
 		posClient.ClosePositionBid(id, "Aeroflot")
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 	}
 	log.Info(time.Since(t))
 	c := make(chan os.Signal, 1)

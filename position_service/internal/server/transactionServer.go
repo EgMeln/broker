@@ -9,7 +9,6 @@ import (
 	"github.com/EgMeln/broker/position_service/internal/service"
 	"github.com/EgMeln/broker/position_service/protocol"
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
 )
 
 // PositionServer struct for grpc server logic
@@ -17,12 +16,13 @@ type PositionServer struct {
 	mu           *sync.RWMutex
 	generatedMap map[string]*model.GeneratedPrice
 	posService   service.PositionService
+	position     map[string]map[string]*model.Transaction
 	*protocol.UnimplementedPositionServiceServer
 }
 
 // NewPositionServer returns new service instance
-func NewPositionServer(serv service.PositionService, mu *sync.RWMutex, priceMap map[string]*model.GeneratedPrice) *PositionServer {
-	return &PositionServer{generatedMap: priceMap, mu: mu, posService: serv}
+func NewPositionServer(serv service.PositionService, mu *sync.RWMutex, priceMap map[string]*model.GeneratedPrice, posMap map[string]map[string]*model.Transaction) *PositionServer {
+	return &PositionServer{generatedMap: priceMap, mu: mu, posService: serv, position: posMap}
 }
 
 // OpenPositionAsk method open position record by ask
@@ -33,11 +33,11 @@ func (srv *PositionServer) OpenPositionAsk(ctx context.Context, in *protocol.Ope
 		IsBay:     true,
 		Symbol:    in.Trans.Symbol,
 	}
-	log.Info(position)
 	id, err := srv.posService.OpenPosition(ctx, &position)
 	if err != nil {
 		return nil, err
 	}
+	srv.position["Ask"][id.String()] = &position
 	return &protocol.OpenResponse{ID: id.String()}, nil
 }
 
@@ -53,6 +53,7 @@ func (srv *PositionServer) OpenPositionBid(ctx context.Context, in *protocol.Ope
 	if err != nil {
 		return nil, err
 	}
+	srv.position["Bid"][id.String()] = &position
 	return &protocol.OpenResponse{ID: id.String()}, nil
 }
 
@@ -66,6 +67,7 @@ func (srv *PositionServer) ClosePositionAsk(ctx context.Context, in *protocol.Cl
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
+	delete(srv.position["Ask"], id.String())
 	return &protocol.CloseResponse{Result: result}, nil
 }
 
@@ -79,5 +81,6 @@ func (srv *PositionServer) ClosePositionBid(ctx context.Context, in *protocol.Cl
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
+	delete(srv.position["Bid"], id.String())
 	return &protocol.CloseResponse{Result: result}, nil
 }
