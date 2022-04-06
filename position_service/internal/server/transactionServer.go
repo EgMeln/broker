@@ -37,7 +37,9 @@ func (srv *PositionServer) OpenPositionAsk(ctx context.Context, in *protocol.Ope
 	if err != nil {
 		return nil, err
 	}
+	srv.mu.Lock()
 	srv.position["Ask"][id.String()] = &position
+	srv.mu.Unlock()
 	return &protocol.OpenResponse{ID: id.String()}, nil
 }
 
@@ -53,7 +55,9 @@ func (srv *PositionServer) OpenPositionBid(ctx context.Context, in *protocol.Ope
 	if err != nil {
 		return nil, err
 	}
+	srv.mu.Lock()
 	srv.position["Bid"][id.String()] = &position
+	srv.mu.Unlock()
 	return &protocol.OpenResponse{ID: id.String()}, nil
 }
 
@@ -67,7 +71,9 @@ func (srv *PositionServer) ClosePositionAsk(ctx context.Context, in *protocol.Cl
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
+	srv.mu.Lock()
 	delete(srv.position["Ask"], id.String())
+	srv.mu.Unlock()
 	return &protocol.CloseResponse{Result: result}, nil
 }
 
@@ -81,6 +87,8 @@ func (srv *PositionServer) ClosePositionBid(ctx context.Context, in *protocol.Cl
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
+	srv.mu.Lock()
 	delete(srv.position["Bid"], id.String())
+	srv.mu.Unlock()
 	return &protocol.CloseResponse{Result: result}, nil
 }

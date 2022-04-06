@@ -45,10 +45,10 @@ func main() {
 	}
 	connectionPriceServer := connectPriceServer()
 
-	go subscribePrices("Aeroflot", connectionPriceServer, mu, transactionMap, positionMap)
-	go subscribePrices("ALROSA", connectionPriceServer, mu, transactionMap, positionMap)
-	go subscribePrices("Akron", connectionPriceServer, mu, transactionMap, positionMap)
-
+	go subscribePrices("Aeroflot", connectionPriceServer, mu, transactionMap)
+	go subscribePrices("ALROSA", connectionPriceServer, mu, transactionMap)
+	go subscribePrices("Akron", connectionPriceServer, mu, transactionMap)
+	go getProfit(positionMap, transactionMap, mu)
 	transactionService := service.NewPositionService(&repository.PostgresPrice{PoolPrice: pool})
 
 	transactionServer := server.NewPositionServer(*transactionService, mu, transactionMap, positionMap)
@@ -101,7 +101,7 @@ func runGRPC(recServer protocol.PositionServiceServer) error {
 	return grpcServer.Serve(listener)
 }
 
-func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice, pos map[string]map[string]*model.Transaction) {
+func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice) {
 	req := protocolPrice.GetRequest{Symbol: symbol}
 	i := 0
 	t := time.Now()
@@ -127,31 +127,32 @@ func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu 
 		mu.Lock()
 		transactionMap[cur.Symbol] = cur
 		mu.Unlock()
-		getProfit(pos, cur, mu)
 
-		log.Infof("Got currency data Name: %v Ask: %v Bid: %v  at time %v",
-			in.Price.Symbol, in.Price.Ask, in.Price.Bid, in.Price.Time)
+		//log.Infof("Got currency data Name: %v Ask: %v Bid: %v  at time %v",
+		//	in.Price.Symbol, in.Price.Ask, in.Price.Bid, in.Price.Time)
 		i++
 		time.Sleep(100 * time.Millisecond)
 	}
 }
 
-func getProfit(pos map[string]map[string]*model.Transaction, price *model.GeneratedPrice, mu *sync.RWMutex) {
-	mu.Lock()
-	for i, val := range pos {
-		if i == "Ask" {
-			for j, key := range val {
-				if key.Symbol == price.Symbol {
-					log.Printf("For position %v profit if close: %v", j, price.Ask-key.PriceOpen)
+func getProfit(pos map[string]map[string]*model.Transaction, price map[string]*model.GeneratedPrice, mu *sync.RWMutex) {
+	for {
+		mu.RLock()
+		for i, val := range pos {
+			if i == "Ask" {
+				for j, key := range val {
+					if key.Symbol == price[key.Symbol].Symbol {
+						log.Printf("For position %v profit if close: %v", j, price[key.Symbol].Ask-key.PriceOpen)
+					}
 				}
-			}
-		} else if i == "Bid" {
-			for j, key := range val {
-				if key.Symbol == price.Symbol {
-					log.Printf("For position %v profit if close: %v", j, price.Bid-key.PriceOpen)
+			} else if i == "Bid" {
+				for j, key := range val {
+					if key.Symbol == price[key.Symbol].Symbol {
+						log.Printf("For position %v profit if close: %v", j, price[key.Symbol].Bid-key.PriceOpen)
+					}
 				}
 			}
 		}
+		mu.RUnlock()
 	}
-	mu.Unlock()
 }
