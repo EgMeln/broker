@@ -29,12 +29,12 @@ func main() {
 	log.Infof("Start open")
 	//id := posClient.OpenPositionAsk("Aeroflot")
 	//id2 := posClient.OpenPositionAsk("ALROSA")
-	//time.Sleep(1 * time.Minute)
+	//time.Sleep(10 * time.Second)
 	//posClient.ClosePositionAsk(id, "Aeroflot")
 	//posClient.ClosePositionAsk(id2, "ALROSA")
 	t := time.Now()
 	var array []string
-	for i := 0; i < 100000; i++ {
+	for i := 0; i < 10000; i++ {
 		id := posClient.OpenPositionAsk("Aeroflot")
 		array = append(array, id)
 		//time.Sleep(50 * time.Millisecond)

@@ -48,10 +48,9 @@ func main() {
 	go subscribePrices("Aeroflot", connectionPriceServer, mu, transactionMap)
 	go subscribePrices("ALROSA", connectionPriceServer, mu, transactionMap)
 	go subscribePrices("Akron", connectionPriceServer, mu, transactionMap)
-	go getProfit(positionMap, transactionMap, mu)
-	transactionService := service.NewPositionService(&repository.PostgresPrice{PoolPrice: pool})
+	transactionService := service.NewPositionService(&repository.PostgresPrice{PoolPrice: pool}, transactionMap, mu, positionMap)
 
-	transactionServer := server.NewPositionServer(*transactionService, mu, transactionMap, positionMap)
+	transactionServer := server.NewPositionServer(*transactionService, mu, transactionMap)
 
 	err = runGRPC(transactionServer)
 
@@ -132,27 +131,5 @@ func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu 
 		//	in.Price.Symbol, in.Price.Ask, in.Price.Bid, in.Price.Time)
 		i++
 		time.Sleep(100 * time.Millisecond)
-	}
-}
-
-func getProfit(pos map[string]map[string]*model.Transaction, price map[string]*model.GeneratedPrice, mu *sync.RWMutex) {
-	for {
-		mu.RLock()
-		for i, val := range pos {
-			if i == "Ask" {
-				for j, key := range val {
-					if key.Symbol == price[key.Symbol].Symbol {
-						log.Printf("For position %v profit if close: %v", j, price[key.Symbol].Ask-key.PriceOpen)
-					}
-				}
-			} else if i == "Bid" {
-				for j, key := range val {
-					if key.Symbol == price[key.Symbol].Symbol {
-						log.Printf("For position %v profit if close: %v", j, price[key.Symbol].Bid-key.PriceOpen)
-					}
-				}
-			}
-		}
-		mu.RUnlock()
 	}
 }
