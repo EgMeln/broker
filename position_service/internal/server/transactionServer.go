@@ -60,7 +60,7 @@ func (srv *PositionServer) ClosePositionAsk(ctx context.Context, in *protocol.Cl
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
-	result, err := srv.posService.ClosePosition(ctx, &(srv.generatedMap)[in.Symbol].Ask, &id, "Ask")
+	result, err := srv.posService.ClosePosition(ctx, &(srv.generatedMap)[in.Symbol].Ask, &id, in.Symbol)
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
@@ -73,7 +73,7 @@ func (srv *PositionServer) ClosePositionBid(ctx context.Context, in *protocol.Cl
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}
-	result, err := srv.posService.ClosePosition(ctx, &(srv.generatedMap)[in.Symbol].Bid, &id, "Bid")
+	result, err := srv.posService.ClosePosition(ctx, &(srv.generatedMap)[in.Symbol].Bid, &id, in.Symbol)
 	if err != nil {
 		return &protocol.CloseResponse{}, err
 	}

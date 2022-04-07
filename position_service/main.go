@@ -39,15 +39,16 @@ func main() {
 	mu := new(sync.RWMutex)
 
 	transactionMap := map[string]*model.GeneratedPrice{}
-	positionMap := map[string]map[string]*model.Transaction{
-		"Ask": {},
-		"Bid": {},
+	positionMap := map[string]map[string]*chan *model.GeneratedPrice{
+		"Aeroflot": {},
+		"ALROSA":   {},
+		"Akron":    {},
 	}
 	connectionPriceServer := connectPriceServer()
 
-	go subscribePrices("Aeroflot", connectionPriceServer, mu, transactionMap)
-	go subscribePrices("ALROSA", connectionPriceServer, mu, transactionMap)
-	go subscribePrices("Akron", connectionPriceServer, mu, transactionMap)
+	go subscribePrices("Aeroflot", connectionPriceServer, mu, transactionMap, positionMap)
+	go subscribePrices("ALROSA", connectionPriceServer, mu, transactionMap, positionMap)
+	go subscribePrices("Akron", connectionPriceServer, mu, transactionMap, positionMap)
 	transactionService := service.NewPositionService(&repository.PostgresPrice{PoolPrice: pool}, transactionMap, mu, positionMap)
 
 	transactionServer := server.NewPositionServer(*transactionService, mu, transactionMap)
@@ -100,7 +101,8 @@ func runGRPC(recServer protocol.PositionServiceServer) error {
 	return grpcServer.Serve(listener)
 }
 
-func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice) {
+func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice,
+	positionMap map[string]map[string]*chan *model.GeneratedPrice) {
 	req := protocolPrice.GetRequest{Symbol: symbol}
 	i := 0
 	t := time.Now()
@@ -125,6 +127,9 @@ func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu 
 		cur := &model.GeneratedPrice{Symbol: in.Price.Symbol, Ask: float64(in.Price.Ask), Bid: float64(in.Price.Bid), DoteTime: in.Price.Time}
 		mu.Lock()
 		transactionMap[cur.Symbol] = cur
+		for _, v := range positionMap[cur.Symbol] {
+			*v <- cur
+		}
 		mu.Unlock()
 
 		//log.Infof("Got currency data Name: %v Ask: %v Bid: %v  at time %v",
