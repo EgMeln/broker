@@ -53,6 +53,7 @@ func (src *PositionService) getProfitByAsk(ch chan *model.GeneratedPrice, trans 
 		if ok {
 			log.Printf("For position %v profit if close: %v", trans.ID, price.Ask-trans.PriceOpen)
 		} else {
+			log.Printf("Position with id %v close", trans.ID)
 			return
 		}
 	}
@@ -63,6 +64,7 @@ func (src *PositionService) getProfitByBid(ch chan *model.GeneratedPrice, trans 
 		if ok {
 			log.Printf("For position %v profit if close: %v", trans.ID, price.Bid-trans.PriceOpen)
 		} else {
+			log.Printf("Position with id %v close", trans.ID)
 			return
 		}
 	}

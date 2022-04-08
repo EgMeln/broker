@@ -27,10 +27,10 @@ func main() {
 	posClient := server.NewPositionServer(priceMap, mute)
 
 	log.Infof("Start open")
-	//id := posClient.OpenPositionAsk("Aeroflot")
+	id := posClient.OpenPositionBid("Aeroflot")
 	id2 := posClient.OpenPositionAsk("ALROSA")
 	time.Sleep(40 * time.Second)
-	//posClient.ClosePositionAsk(id, "Aeroflot")
+	posClient.ClosePositionBid(id, "Aeroflot")
 	posClient.ClosePositionAsk(id2, "ALROSA")
 	//t := time.Now()
 	//var array []string
