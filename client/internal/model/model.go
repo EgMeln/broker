@@ -1,10 +1,13 @@
+// Package model contain model of struct
 package model
 
 import (
 	"encoding/json"
+
 	"github.com/google/uuid"
 )
 
+// GeneratedPrice struct that contain record info about new price
 type GeneratedPrice struct {
 	ID       uuid.UUID
 	Ask      float64
@@ -13,10 +16,12 @@ type GeneratedPrice struct {
 	DoteTime string
 }
 
+// UnmarshalBinary unmarshal currency from byte
 func (gen *GeneratedPrice) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, gen)
 }
 
+// Transaction struct that contain record info about transaction
 type Transaction struct {
 	ID         uuid.UUID
 	PriceOpen  float64

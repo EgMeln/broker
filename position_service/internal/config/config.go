@@ -1,7 +1,9 @@
+// Package config to env
 package config
 
 import "github.com/caarlos0/env/v6"
 
+// Config struct to postgres config env
 type Config struct {
 	DB             string `env:"DB" envDefault:"postgres"`
 	User           string `env:"USER" envDefault:"egormelnikov"`
@@ -12,6 +14,7 @@ type Config struct {
 	DBURL          string `env:"DBURL" envDefault:""`
 }
 
+// New contract config
 func New() (*Config, error) {
 	cfg := &Config{}
 	if err := env.Parse(cfg); err != nil {

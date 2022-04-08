@@ -1,12 +1,15 @@
+// Package producer to produce messages to redis
 package producer
 
 import (
 	"context"
 	"fmt"
+
 	"github.com/EgMeln/broker/price_generator/internal/service/generate"
 	"github.com/go-redis/redis/v8"
 )
 
+// Producer struct for redis client
 type Producer struct {
 	redisClient *redis.Client
 	redisStream string

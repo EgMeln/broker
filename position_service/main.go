@@ -3,6 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
+	"net"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
+	"time"
+
 	"github.com/EgMeln/broker/position_service/internal/config"
 	"github.com/EgMeln/broker/position_service/internal/model"
 	"github.com/EgMeln/broker/position_service/internal/repository"
@@ -14,12 +22,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"io"
-	"net"
-	"os"
-	"os/signal"
-	"sync"
-	"syscall"
 )
 
 func main() {
@@ -37,14 +39,19 @@ func main() {
 	mu := new(sync.RWMutex)
 
 	transactionMap := map[string]*model.GeneratedPrice{}
-
+	positionMap := map[string]map[string]*chan *model.GeneratedPrice{
+		"Aeroflot": {},
+		"ALROSA":   {},
+		"Akron":    {},
+	}
 	connectionPriceServer := connectPriceServer()
 
-	go subscribePrices("ALROSA", connectionPriceServer, mu, transactionMap)
+	go subscribePrices("Aeroflot", connectionPriceServer, mu, transactionMap, positionMap)
+	go subscribePrices("ALROSA", connectionPriceServer, mu, transactionMap, positionMap)
+	go subscribePrices("Akron", connectionPriceServer, mu, transactionMap, positionMap)
+	transactionService := service.NewPositionService(&repository.PostgresPrice{PoolPrice: pool}, transactionMap, mu, positionMap)
 
-	transactionService := service.NewPositionService(&repository.PostgresPrice{PoolPrice: pool})
-
-	transactionServer := server.NewPositionServer(*transactionService, mu, &transactionMap)
+	transactionServer := server.NewPositionServer(*transactionService, mu, transactionMap)
 
 	err = runGRPC(transactionServer)
 
@@ -94,13 +101,22 @@ func runGRPC(recServer protocol.PositionServiceServer) error {
 	return grpcServer.Serve(listener)
 }
 
-func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice) {
+func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice,
+	positionMap map[string]map[string]*chan *model.GeneratedPrice) {
 	req := protocolPrice.GetRequest{Symbol: symbol}
-	stream, err := client.GetPrice(context.Background(), &req)
-	if err != nil {
-		log.Fatalf("%v get price error, %v", client, err)
-	}
+	i := 0
+	t := time.Now()
 	for {
+		if i == 10 {
+			i = 0
+			log.Info(time.Since(t))
+			time.Sleep(1 * time.Second)
+			t = time.Now()
+		}
+		stream, err := client.GetPrice(context.Background(), &req)
+		if err != nil {
+			log.Fatalf("%v get price error, %v", client, err)
+		}
 		in, err := stream.Recv()
 		if err == io.EOF {
 			return
@@ -108,13 +124,17 @@ func subscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu 
 		if err != nil {
 			log.Fatalf("Failed to receive a note : %v", err)
 		}
-
 		cur := &model.GeneratedPrice{Symbol: in.Price.Symbol, Ask: float64(in.Price.Ask), Bid: float64(in.Price.Bid), DoteTime: in.Price.Time}
 		mu.Lock()
 		transactionMap[cur.Symbol] = cur
+		for _, v := range positionMap[cur.Symbol] {
+			*v <- cur
+		}
 		mu.Unlock()
 
-		log.Infof("Got currency data Name: %v Ask: %v Bid: %v  at time %v",
-			in.Price.Symbol, in.Price.Ask, in.Price.Bid, in.Price.Time)
+		//log.Infof("Got currency data Name: %v Ask: %v Bid: %v  at time %v",
+		//	in.Price.Symbol, in.Price.Ask, in.Price.Bid, in.Price.Time)
+		i++
+		time.Sleep(100 * time.Millisecond)
 	}
 }

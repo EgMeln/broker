@@ -1,7 +1,9 @@
+// Package generate to generate price map
 package generate
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"time"
 
 	"github.com/EgMeln/broker/price_generator/internal/model"
@@ -47,14 +49,16 @@ func NewGenerator() *Generator {
 
 // GeneratePrices generates bid prices
 func (gen *Generator) GeneratePrices() {
-	rand.Seed(time.Now().UnixNano())
 	for key, value := range gen.Prices {
-		a := rand.Intn(2)
+		a, err := rand.Int(rand.Reader, big.NewInt(2))
+		if err != nil {
+			log.Errorf("rand int error %v", err)
+		}
 		var coeff float64
-		if a == 0 {
-			coeff = 0.98
+		if a.Int64() == 0 {
+			coeff = 1.021
 		} else {
-			coeff = 1.01
+			coeff = 0.98
 		}
 		bid := &model.Price{
 			Symbol:   key,
@@ -63,6 +67,6 @@ func (gen *Generator) GeneratePrices() {
 			DoteTime: time.Now().Format(timeFormat),
 		}
 		gen.Prices[key] = bid
-		log.Info((*gen).Prices[key])
+		log.Info(gen.Prices[key])
 	}
 }

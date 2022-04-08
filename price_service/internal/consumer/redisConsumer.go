@@ -1,25 +1,31 @@
+// Package consumer to consume messages from redis
 package consumer
 
 import (
 	"context"
+	"sync"
+
 	"github.com/EgMeln/broker/price_service/internal/model"
 	"github.com/go-redis/redis"
 	log "github.com/sirupsen/logrus"
-	"sync"
 )
 
+// Consumer struct for redis client
 type Consumer struct {
 	RedisClient  *redis.Client
 	redisStream  string
-	mu           sync.RWMutex
-	generatedMap *map[string]*model.GeneratedPrice
+	mu           *sync.RWMutex
+	generatedMap map[string]*model.GeneratedPrice
 }
 
-func NewConsumer(ctx context.Context, cln *redis.Client, priceMap *map[string]*model.GeneratedPrice) *Consumer {
-	red := &Consumer{RedisClient: cln, redisStream: "STREAM", generatedMap: priceMap, mu: sync.RWMutex{}}
+// NewConsumer returns new instance of redis consumer
+func NewConsumer(ctx context.Context, cln *redis.Client, priceMap map[string]*model.GeneratedPrice, mu *sync.RWMutex) *Consumer {
+	red := &Consumer{RedisClient: cln, redisStream: "STREAM", generatedMap: priceMap, mu: mu}
 	go red.GetPrices(ctx)
 	return red
 }
+
+// GetPrices get messages from redis
 func (cons *Consumer) GetPrices(ctx context.Context) {
 	for {
 		select {
@@ -39,16 +45,16 @@ func (cons *Consumer) GetPrices(ctx context.Context) {
 				continue
 			}
 			stream := streams[0].Messages[0].Values
-			price := new(model.GeneratedPrice)
 			for _, value := range stream {
+				price := new(model.GeneratedPrice)
 				err = price.UnmarshalBinary([]byte(value.(string)))
 				if err != nil {
 					log.Errorf("can't parse message %v", err)
 				}
 				cons.mu.Lock()
-				(*cons.generatedMap)[price.Symbol] = price
-				log.Info((*cons.generatedMap)[price.Symbol])
+				cons.generatedMap[price.Symbol] = price
 				cons.mu.Unlock()
+				log.Info("Consumer ", cons.generatedMap[price.Symbol])
 			}
 		}
 	}

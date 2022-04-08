@@ -2,6 +2,12 @@ package main
 
 import (
 	"context"
+	"net"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
+
 	"github.com/EgMeln/broker/price_service/internal/config"
 	"github.com/EgMeln/broker/price_service/internal/consumer"
 	"github.com/EgMeln/broker/price_service/internal/model"
@@ -10,11 +16,6 @@ import (
 	"github.com/go-redis/redis"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"net"
-	"os"
-	"os/signal"
-	"sync"
-	"syscall"
 )
 
 func main() {
@@ -36,17 +37,17 @@ func main() {
 
 	mutex := sync.RWMutex{}
 
-	priceServer := server.NewPriceServer(&mutex, &priceMap)
+	priceServer := server.NewPriceServer(&mutex, priceMap)
 
 	go runGRPC(priceServer)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	cons := consumer.NewConsumer(ctx, redisClient, &priceMap)
+	cons := consumer.NewConsumer(ctx, redisClient, priceMap, &mutex)
 
 	defer func(RedisClient *redis.Client) {
 		err := RedisClient.Close()
 		if err != nil {
-			log.Fatalln("close redis connection error %v", err)
+			log.Fatalf("close redis connection error %v", err)
 		}
 	}(cons.RedisClient)
 
