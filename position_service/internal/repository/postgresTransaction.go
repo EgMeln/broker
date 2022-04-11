@@ -11,9 +11,9 @@ import (
 )
 
 // OpenPosition function to inserting a position into postgres db
-func (rep *PostgresPrice) OpenPosition(ctx context.Context, trans *model.Transaction) (*uuid.UUID, error) {
-	_, err := rep.PoolPrice.Exec(ctx, "INSERT INTO positions(id_,price_open,is_bay,symbol,price_close) VALUES ($1,$2,$3,$4,$5)",
-		trans.ID, trans.PriceOpen, true, trans.Symbol, trans.PriceClose)
+func (rep *PostgresPrice) OpenPosition(ctx context.Context, trans *model.Transaction, bay string) (*uuid.UUID, error) {
+	_, err := rep.PoolPrice.Exec(ctx, "INSERT INTO positions(id_,price_open,is_bay,symbol,price_close,bay_by) VALUES ($1,$2,$3,$4,$5,$6)",
+		trans.ID, trans.PriceOpen, true, trans.Symbol, trans.PriceClose, bay)
 	if err != nil {
 		log.Errorf("can't insert position %v", err)
 		return &trans.ID, err

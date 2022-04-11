@@ -27,23 +27,23 @@ func main() {
 	posClient := server.NewPositionServer(priceMap, mute)
 
 	log.Infof("Start open")
-	id := posClient.OpenPositionBid("Aeroflot")
-	id2 := posClient.OpenPositionAsk("ALROSA")
-	time.Sleep(40 * time.Second)
-	posClient.ClosePositionBid(id, "Aeroflot")
-	posClient.ClosePositionAsk(id2, "ALROSA")
-	//t := time.Now()
-	//var array []string
-	//for i := 0; i < 10000; i++ {
-	//	id := posClient.OpenPositionAsk("Aeroflot")
-	//	array = append(array, id)
-	//	//time.Sleep(50 * time.Millisecond)
-	//}
-	//time.Sleep(10 * time.Second)
-	//for _, id := range array {
-	//	posClient.ClosePositionAsk(id, "Aeroflot")
-	//}
-	//log.Info(time.Since(t))
+	//id2 := posClient.OpenPositionAsk("ALROSA")
+	//id := posClient.OpenPositionBid("Aeroflot")
+	//time.Sleep(40 * time.Second)
+	//posClient.ClosePositionAsk(id2, "ALROSA")
+	//posClient.ClosePositionBid(id, "Aeroflot")
+	t := time.Now()
+	var array []string
+	for i := 0; i < 10000; i++ {
+		id := posClient.OpenPositionAsk("Aeroflot")
+		array = append(array, id)
+		//time.Sleep(50 * time.Millisecond)
+	}
+	time.Sleep(10 * time.Second)
+	for _, id := range array {
+		posClient.ClosePositionAsk(id, "Aeroflot")
+	}
+	log.Info(time.Since(t))
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 

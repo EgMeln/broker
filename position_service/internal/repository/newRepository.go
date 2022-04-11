@@ -16,6 +16,6 @@ type PostgresPrice struct {
 
 // PriceTransaction used for structuring, function for working with transaction
 type PriceTransaction interface {
-	OpenPosition(ctx context.Context, trans *model.Transaction) (*uuid.UUID, error)
+	OpenPosition(ctx context.Context, trans *model.Transaction, bay string) (*uuid.UUID, error)
 	ClosePosition(ctx context.Context, closePrice *float64, id *uuid.UUID) (string, error)
 }
