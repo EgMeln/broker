@@ -13,9 +13,6 @@ $$
 DECLARE
     channel      text := TG_ARGV[0];
 BEGIN
---     SELECT row_to_json(row) into notification from (select * from positions ORDER BY id_ DESC LIMIT 1) row;
---     PERFORM pg_notify('events', notification::text);
---     RETURN NULL;
         PERFORM (
         with pos(id_, price_open, is_bay, symbol, price_close, bay_by) as
                  (
