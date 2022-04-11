@@ -25,9 +25,9 @@ func ConnectPriceServer() protocolPrice.PriceServiceClient {
 }
 
 // SubscribePrices for get prices from grpc
-func SubscribePrices(symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice) {
+func SubscribePrices(ctx context.Context, symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice) {
 	req := protocolPrice.GetRequest{Symbol: symbol}
-	stream, err := client.GetPrice(context.Background(), &req)
+	stream, err := client.GetPrice(ctx, &req)
 	i := 0
 	t := time.Now()
 	if err != nil {

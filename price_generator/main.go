@@ -19,8 +19,8 @@ func main() {
 	if err != nil {
 		log.Fatalln("Config error: ", redisCfg)
 	}
-
-	redisClient := connRedis(redisCfg)
+	ctx := context.Background()
+	redisClient := connRedis(ctx, redisCfg)
 	gen := generate.NewGenerator()
 	prod := producer.NewRedis(redisClient)
 	serv := send.NewService(prod, gen)
@@ -29,7 +29,7 @@ func main() {
 
 	log.Info("Start generating prices")
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctx)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
@@ -47,12 +47,12 @@ func main() {
 	log.Info("Success consuming messages")
 }
 
-func connRedis(redisCfg *config.RedisConfig) *redis.Client {
+func connRedis(ctx context.Context, redisCfg *config.RedisConfig) *redis.Client {
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     redisCfg.Addr,
 		Password: redisCfg.Password,
 		DB:       redisCfg.DB})
-	if _, ok := redisClient.Ping(context.Background()).Result(); ok != nil {
+	if _, ok := redisClient.Ping(ctx).Result(); ok != nil {
 		log.Fatalf("redis new client error %v", ok)
 	}
 	return redisClient

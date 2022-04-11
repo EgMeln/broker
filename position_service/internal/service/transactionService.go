@@ -23,9 +23,9 @@ type PositionService struct {
 }
 
 // NewPositionService used for setting position services
-func NewPositionService(rep *repository.PostgresPrice, priceMap map[string]*model.GeneratedPrice, mute *sync.RWMutex, pos map[string]map[string]*chan *model.GeneratedPrice, pool *pgxpool.Pool) *PositionService {
+func NewPositionService(ctx context.Context, rep *repository.PostgresPrice, priceMap map[string]*model.GeneratedPrice, mute *sync.RWMutex, pos map[string]map[string]*chan *model.GeneratedPrice, pool *pgxpool.Pool) *PositionService {
 	PosService := PositionService{rep: rep, generatedMap: priceMap, mu: mute, positionMap: pos, pool: pool}
-	go PosService.waitForNotification()
+	go PosService.waitForNotification(ctx)
 	return &PosService
 }
 
@@ -61,18 +61,18 @@ func (src *PositionService) getProfitByBid(ch chan *model.GeneratedPrice, trans 
 		}
 	}
 }
-func (src *PositionService) waitForNotification() {
-	conn, err := src.pool.Acquire(context.Background())
+func (src *PositionService) waitForNotification(ctx context.Context) {
+	conn, err := src.pool.Acquire(ctx)
 	if err != nil {
 		log.Printf("Error connection %v", err)
 	}
 	defer conn.Release()
-	_, err = conn.Exec(context.Background(), "listen positions")
+	_, err = conn.Exec(ctx, "listen positions")
 	if err != nil {
 		log.Printf(" conn exec %v", err)
 	}
 	for {
-		notification, err := conn.Conn().WaitForNotification(context.Background())
+		notification, err := conn.Conn().WaitForNotification(ctx)
 		if err != nil {
 			log.Printf("error waiting for notification: %v", err)
 		}
