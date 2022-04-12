@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="de5289c4-a6f8-49a9-b0a4-0e4d6ac88de9" name="Changes" comment="v1.13 (contexts)">
-      <change beforePath="$PROJECT_DIR$/client/internal/server/positionServer.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/internal/server/positionServer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/position_service/internal/service/transactionService.go" beforeDir="false" afterPath="$PROJECT_DIR$/position_service/internal/service/transactionService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/position_service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/position_service/main.go" afterDir="false" />
-    </list>
+    <list default="true" id="de5289c4-a6f8-49a9-b0a4-0e4d6ac88de9" name="Changes" comment="v1.14 (contexts/log/switch true/false)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -67,7 +62,7 @@
     <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.watchers.conflict.with.on.save.actions.check.performed" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/price_service" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="service.view.auto.scroll.to.source" value="true" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
@@ -76,11 +71,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/price_service" />
       <recent name="$PROJECT_DIR$/price_generator" />
       <recent name="$PROJECT_DIR$/position_service" />
       <recent name="$PROJECT_DIR$/client" />
-      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunManager" selected="Docker.docker-compose.yml.client: Compose Deployment">
@@ -187,7 +182,8 @@
     <MESSAGE value="v1.11 (add pnl)" />
     <MESSAGE value="v1.12 (PostgreSQL LISTEN/NOTIFY)" />
     <MESSAGE value="v1.13 (contexts)" />
-    <option name="LAST_COMMIT_MESSAGE" value="v1.13 (contexts)" />
+    <MESSAGE value="v1.14 (contexts/log/switch true/false)" />
+    <option name="LAST_COMMIT_MESSAGE" value="v1.14 (contexts/log/switch true/false)" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
