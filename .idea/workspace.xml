@@ -76,10 +76,10 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/position_service" />
-      <recent name="$PROJECT_DIR$/client" />
       <recent name="$PROJECT_DIR$/price_service" />
       <recent name="$PROJECT_DIR$/price_generator" />
+      <recent name="$PROJECT_DIR$/position_service" />
+      <recent name="$PROJECT_DIR$/client" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
