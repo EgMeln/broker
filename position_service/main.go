@@ -35,7 +35,6 @@ func main() {
 	log.Infof("DB URL: %s", cfg.DBURL)
 	pool := connectPostgres(ctx, cfg.DBURL)
 	log.Infof("Connected!")
-
 	mu := new(sync.RWMutex)
 
 	transactionMap := map[string]*model.GeneratedPrice{}
@@ -94,7 +93,7 @@ func runGRPC(recServer protocol.PositionServiceServer) error {
 	}
 	grpcServer := grpc.NewServer()
 	protocol.RegisterPositionServiceServer(grpcServer, recServer)
-	log.Printf("server listening at %v", listener.Addr())
+	log.Infof("server listening at %v", listener.Addr())
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
@@ -110,7 +109,6 @@ func subscribePrices(ctx context.Context, symbol string, client protocolPrice.Pr
 		if i == 10 {
 			i = 0
 			log.Info(time.Since(t))
-			time.Sleep(1 * time.Second)
 			t = time.Now()
 		}
 		stream, err := client.GetPrice(ctx, &req)
@@ -135,6 +133,5 @@ func subscribePrices(ctx context.Context, symbol string, client protocolPrice.Pr
 		//log.Infof("Got currency data Name: %v Ask: %v Bid: %v  at time %v",
 		//	in.Price.Symbol, in.Price.Ask, in.Price.Bid, in.Price.Time)
 		i++
-		time.Sleep(100 * time.Millisecond)
 	}
 }

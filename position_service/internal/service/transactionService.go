@@ -43,9 +43,9 @@ func (src *PositionService) getProfitByAsk(ch chan *model.GeneratedPrice, trans 
 	for {
 		price, ok := <-ch
 		if ok {
-			log.Printf("For position %v profit if close: %v", trans.ID, price.Ask-trans.PriceOpen)
+			log.Infof("For position %v profit if close: %v", trans.ID, price.Ask-trans.PriceOpen)
 		} else {
-			log.Printf("Position with id %v close", trans.ID)
+			log.Infof("Position with id %v close", trans.ID)
 			return
 		}
 	}
@@ -54,9 +54,9 @@ func (src *PositionService) getProfitByBid(ch chan *model.GeneratedPrice, trans 
 	for {
 		price, ok := <-ch
 		if ok {
-			log.Printf("For position %v profit if close: %v", trans.ID, price.Bid-trans.PriceOpen)
+			log.Infof("For position %v profit if close: %v", trans.ID, price.Bid-trans.PriceOpen)
 		} else {
-			log.Printf("Position with id %v close", trans.ID)
+			log.Infof("Position with id %v close", trans.ID)
 			return
 		}
 	}
@@ -64,28 +64,27 @@ func (src *PositionService) getProfitByBid(ch chan *model.GeneratedPrice, trans 
 func (src *PositionService) waitForNotification(ctx context.Context) {
 	conn, err := src.pool.Acquire(ctx)
 	if err != nil {
-		log.Printf("Error connection %v", err)
+		log.Errorf("Error connection %v", err)
 	}
 	defer conn.Release()
 	_, err = conn.Exec(ctx, "listen positions")
 	if err != nil {
-		log.Printf(" conn exec %v", err)
+		log.Errorf(" conn exec %v", err)
 	}
 	for {
 		notification, err := conn.Conn().WaitForNotification(ctx)
 		if err != nil {
-			log.Printf("error waiting for notification: %v", err)
+			log.Errorf("error waiting for notification: %v", err)
 		}
 		position := model.Transaction{}
 		if err := json.Unmarshal([]byte(notification.Payload), &position); err != nil {
-			log.Printf("Unmarshal error %v", err)
+			log.Errorf("Unmarshal error %v", err)
 		}
 		if err != nil {
-			log.Println("Error waiting for notification:", err)
+			log.Error("Error waiting for notification:", err)
 		}
 		ch := make(chan *model.GeneratedPrice)
-		switch position.IsBay {
-		case true:
+		if position.IsBay {
 			src.mu.Lock()
 			src.positionMap[position.Symbol][position.ID.String()] = &ch
 			src.mu.Unlock()
@@ -94,7 +93,7 @@ func (src *PositionService) waitForNotification(ctx context.Context) {
 			} else if position.BayBy == "Bid" {
 				go src.getProfitByBid(ch, &position)
 			}
-		case false:
+		} else {
 			src.mu.Lock()
 			close(*src.positionMap[position.Symbol][position.ID.String()])
 			delete(src.positionMap[position.Symbol], position.ID.String())
