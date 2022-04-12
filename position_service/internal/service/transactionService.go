@@ -3,6 +3,8 @@ package service
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/jackc/pgx/v4/pgxpool"
 	log "github.com/sirupsen/logrus"
 	"sync"
 
@@ -13,6 +15,7 @@ import (
 
 // PositionService struct for
 type PositionService struct {
+	pool         *pgxpool.Pool
 	rep          repository.PriceTransaction
 	generatedMap map[string]*model.GeneratedPrice
 	mu           *sync.RWMutex
@@ -20,30 +23,19 @@ type PositionService struct {
 }
 
 // NewPositionService used for setting position services
-func NewPositionService(rep *repository.PostgresPrice, priceMap map[string]*model.GeneratedPrice, mute *sync.RWMutex, pos map[string]map[string]*chan *model.GeneratedPrice) *PositionService {
-	return &PositionService{rep: rep, generatedMap: priceMap, mu: mute, positionMap: pos}
+func NewPositionService(ctx context.Context, rep *repository.PostgresPrice, priceMap map[string]*model.GeneratedPrice, mute *sync.RWMutex, pos map[string]map[string]*chan *model.GeneratedPrice, pool *pgxpool.Pool) *PositionService {
+	PosService := PositionService{rep: rep, generatedMap: priceMap, mu: mute, positionMap: pos, pool: pool}
+	go PosService.waitForNotification(ctx)
+	return &PosService
 }
 
 // OpenPosition add record about position
 func (src *PositionService) OpenPosition(ctx context.Context, trans *model.Transaction, str string) (*uuid.UUID, error) {
-	ch := make(chan *model.GeneratedPrice)
-	src.mu.Lock()
-	src.positionMap[trans.Symbol][trans.ID.String()] = &ch
-	src.mu.Unlock()
-	if str == "Ask" {
-		go src.getProfitByAsk(ch, trans)
-	} else if str == "Bid" {
-		go src.getProfitByBid(ch, trans)
-	}
-	return src.rep.OpenPosition(ctx, trans)
+	return src.rep.OpenPosition(ctx, trans, str)
 }
 
 // ClosePosition update record about position
-func (src *PositionService) ClosePosition(ctx context.Context, closePrice *float64, id *uuid.UUID, str string) (string, error) {
-	src.mu.Lock()
-	close(*src.positionMap[str][(*id).String()])
-	delete(src.positionMap[str], id.String())
-	src.mu.Unlock()
+func (src *PositionService) ClosePosition(ctx context.Context, closePrice *float64, id *uuid.UUID) (string, error) {
 	return src.rep.ClosePosition(ctx, closePrice, id)
 }
 
@@ -51,9 +43,9 @@ func (src *PositionService) getProfitByAsk(ch chan *model.GeneratedPrice, trans 
 	for {
 		price, ok := <-ch
 		if ok {
-			log.Printf("For position %v profit if close: %v", trans.ID, price.Ask-trans.PriceOpen)
+			log.Infof("For position %v profit if close: %v", trans.ID, price.Ask-trans.PriceOpen)
 		} else {
-			log.Printf("Position with id %v close", trans.ID)
+			log.Infof("Position with id %v close", trans.ID)
 			return
 		}
 	}
@@ -62,10 +54,50 @@ func (src *PositionService) getProfitByBid(ch chan *model.GeneratedPrice, trans 
 	for {
 		price, ok := <-ch
 		if ok {
-			log.Printf("For position %v profit if close: %v", trans.ID, price.Bid-trans.PriceOpen)
+			log.Infof("For position %v profit if close: %v", trans.ID, price.Bid-trans.PriceOpen)
 		} else {
-			log.Printf("Position with id %v close", trans.ID)
+			log.Infof("Position with id %v close", trans.ID)
 			return
+		}
+	}
+}
+func (src *PositionService) waitForNotification(ctx context.Context) {
+	conn, err := src.pool.Acquire(ctx)
+	if err != nil {
+		log.Errorf("Error connection %v", err)
+	}
+	defer conn.Release()
+	_, err = conn.Exec(ctx, "listen positions")
+	if err != nil {
+		log.Errorf(" conn exec %v", err)
+	}
+	for {
+		notification, err := conn.Conn().WaitForNotification(ctx)
+		if err != nil {
+			log.Errorf("error waiting for notification: %v", err)
+		}
+		position := model.Transaction{}
+		if err := json.Unmarshal([]byte(notification.Payload), &position); err != nil {
+			log.Errorf("Unmarshal error %v", err)
+		}
+		if err != nil {
+			log.Error("Error waiting for notification:", err)
+		}
+		ch := make(chan *model.GeneratedPrice)
+		if position.IsBay {
+			src.mu.Lock()
+			src.positionMap[position.Symbol][position.ID.String()] = &ch
+			src.mu.Unlock()
+			if position.BayBy == "Ask" {
+				go src.getProfitByAsk(ch, &position)
+			} else if position.BayBy == "Bid" {
+				go src.getProfitByBid(ch, &position)
+			}
+		} else {
+			src.mu.Lock()
+			close(*src.positionMap[position.Symbol][position.ID.String()])
+			delete(src.positionMap[position.Symbol], position.ID.String())
+			src.mu.Unlock()
 		}
 	}
 }

@@ -40,41 +40,41 @@ func NewPositionServer(generatedMap map[string]*model.GeneratedPrice, mutex *syn
 }
 
 // OpenPositionAsk method open position record by ask
-func (s *PositionServer) OpenPositionAsk(currency string) string { //nolint:dupl //Different business logic
+func (s *PositionServer) OpenPositionAsk(ctx context.Context, currency string) string { //nolint:dupl //Different business logic
 	mod := &protocolPosition.Transaction{ID: ((s.generatedMap)[currency].ID).String(), PriceOpen: float32((s.generatedMap)[currency].Ask), IsBay: true, Symbol: currency}
-	open, err := s.posService.OpenPositionAsk(context.Background(), &protocolPosition.OpenRequest{Trans: mod})
+	open, err := s.posService.OpenPositionAsk(ctx, &protocolPosition.OpenRequest{Trans: mod})
 	if err != nil {
-		log.Printf("Error while opening position: %v", err)
+		log.Errorf("Error while opening position: %v", err)
 	}
-	log.Printf("Position open with id: %s", open.ID)
+	log.Infof("Position open with id: %s", open.ID)
 	return open.ID
 }
 
 // OpenPositionBid method open position record by bid
-func (s *PositionServer) OpenPositionBid(currency string) string { //nolint:dupl //Different business logic
+func (s *PositionServer) OpenPositionBid(ctx context.Context, currency string) string { //nolint:dupl //Different business logic
 	mod := &protocolPosition.Transaction{ID: ((s.generatedMap)[currency].ID).String(), PriceOpen: float32((s.generatedMap)[currency].Bid), IsBay: true, Symbol: currency}
-	open, err := s.posService.OpenPositionBid(context.Background(), &protocolPosition.OpenRequest{Trans: mod})
+	open, err := s.posService.OpenPositionBid(ctx, &protocolPosition.OpenRequest{Trans: mod})
 	if err != nil {
-		log.Printf("Error while opening position: %v", err)
+		log.Errorf("Error while opening position: %v", err)
 	}
-	log.Printf("Position open with id: %s", open.ID)
+	log.Infof("Position open with id: %s", open.ID)
 	return open.ID
 }
 
 // ClosePositionAsk method close position record by ask
-func (s *PositionServer) ClosePositionAsk(id, currency string) {
-	res, err := s.posService.ClosePositionAsk(context.Background(), &protocolPosition.CloseRequest{ID: id, Symbol: currency, PriceClose: float32((s.generatedMap)[currency].Ask)})
+func (s *PositionServer) ClosePositionAsk(ctx context.Context, id, currency string) {
+	res, err := s.posService.ClosePositionAsk(ctx, &protocolPosition.CloseRequest{ID: id, Symbol: currency, PriceClose: float32((s.generatedMap)[currency].Ask)})
 	if err != nil {
-		log.Printf("Error while closing position: %v", err)
+		log.Errorf("Error while closing position: %v", err)
 	}
-	log.Printf("Position with id: %s closed. Profit %v", id, res.Result)
+	log.Infof("Position with id: %s closed. Profit %v", id, res.Result)
 }
 
 // ClosePositionBid method open position record by bid
-func (s *PositionServer) ClosePositionBid(id, currency string) {
-	res, err := s.posService.ClosePositionBid(context.Background(), &protocolPosition.CloseRequest{ID: id, Symbol: currency, PriceClose: float32((s.generatedMap)[currency].Bid)})
+func (s *PositionServer) ClosePositionBid(ctx context.Context, id, currency string) {
+	res, err := s.posService.ClosePositionBid(ctx, &protocolPosition.CloseRequest{ID: id, Symbol: currency, PriceClose: float32((s.generatedMap)[currency].Bid)})
 	if err != nil {
-		log.Printf("Error while closing position: %v", err)
+		log.Errorf("Error while closing position: %v", err)
 	}
-	log.Printf("Position with id: %s closed.Profit %v", id, res.Result)
+	log.Infof("Position with id: %s closed.Profit %v", id, res.Result)
 }
