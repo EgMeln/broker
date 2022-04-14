@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="egormelnikovdb@localhost">
-  <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.32">
+  <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.38">
     <root id="1">
       <DateStyle>mdy</DateStyle>
-      <IntrospectionStateNumber>120005</IntrospectionStateNumber>
+      <IntrospectionStateNumber>289002</IntrospectionStateNumber>
       <ServerVersion>14.2</ServerVersion>
-      <StartupTime>1649430315</StartupTime>
+      <StartupTime>1649918303</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -1395,7 +1395,7 @@ true posixrules
 13391||10|C|G
 13391||-9223372036854775808|U|G
 13391||10|U|G</Grants>
-      <IntrospectionStateNumber>120006</IntrospectionStateNumber>
+      <IntrospectionStateNumber>289003</IntrospectionStateNumber>
       <ObjectId>16384</ObjectId>
       <OwnerName>egormelnikov</OwnerName>
     </database>
@@ -1404,43 +1404,7 @@ true posixrules
       <ObjectId>13757</ObjectId>
       <OwnerName>egormelnikov</OwnerName>
     </database>
-    <role id="4" parent="1" name="pg_database_owner">
-      <ObjectId>6171</ObjectId>
-    </role>
-    <role id="5" parent="1" name="pg_read_all_data">
-      <ObjectId>6181</ObjectId>
-    </role>
-    <role id="6" parent="1" name="pg_write_all_data">
-      <ObjectId>6182</ObjectId>
-    </role>
-    <role id="7" parent="1" name="pg_monitor">
-      <ObjectId>3373</ObjectId>
-      <RoleGrants>3374
-3375
-3377</RoleGrants>
-    </role>
-    <role id="8" parent="1" name="pg_read_all_settings">
-      <ObjectId>3374</ObjectId>
-    </role>
-    <role id="9" parent="1" name="pg_read_all_stats">
-      <ObjectId>3375</ObjectId>
-    </role>
-    <role id="10" parent="1" name="pg_stat_scan_tables">
-      <ObjectId>3377</ObjectId>
-    </role>
-    <role id="11" parent="1" name="pg_read_server_files">
-      <ObjectId>4569</ObjectId>
-    </role>
-    <role id="12" parent="1" name="pg_write_server_files">
-      <ObjectId>4570</ObjectId>
-    </role>
-    <role id="13" parent="1" name="pg_execute_server_program">
-      <ObjectId>4571</ObjectId>
-    </role>
-    <role id="14" parent="1" name="pg_signal_backend">
-      <ObjectId>4200</ObjectId>
-    </role>
-    <role id="15" parent="1" name="egormelnikov">
+    <role id="4" parent="1" name="egormelnikov">
       <BypassRls>1</BypassRls>
       <CanLogin>1</CanLogin>
       <CreateDb>1</CreateDb>
@@ -1448,6 +1412,42 @@ true posixrules
       <ObjectId>10</ObjectId>
       <Replication>1</Replication>
       <SuperRole>1</SuperRole>
+    </role>
+    <role id="5" parent="1" name="pg_database_owner">
+      <ObjectId>6171</ObjectId>
+    </role>
+    <role id="6" parent="1" name="pg_execute_server_program">
+      <ObjectId>4571</ObjectId>
+    </role>
+    <role id="7" parent="1" name="pg_monitor">
+      <ObjectId>3373</ObjectId>
+      <RoleGrants>3374
+3375
+3377</RoleGrants>
+    </role>
+    <role id="8" parent="1" name="pg_read_all_data">
+      <ObjectId>6181</ObjectId>
+    </role>
+    <role id="9" parent="1" name="pg_read_all_settings">
+      <ObjectId>3374</ObjectId>
+    </role>
+    <role id="10" parent="1" name="pg_read_all_stats">
+      <ObjectId>3375</ObjectId>
+    </role>
+    <role id="11" parent="1" name="pg_read_server_files">
+      <ObjectId>4569</ObjectId>
+    </role>
+    <role id="12" parent="1" name="pg_signal_backend">
+      <ObjectId>4200</ObjectId>
+    </role>
+    <role id="13" parent="1" name="pg_stat_scan_tables">
+      <ObjectId>3377</ObjectId>
+    </role>
+    <role id="14" parent="1" name="pg_write_all_data">
+      <ObjectId>6182</ObjectId>
+    </role>
+    <role id="15" parent="1" name="pg_write_server_files">
+      <ObjectId>4570</ObjectId>
     </role>
     <tablespace id="16" parent="1" name="pg_default">
       <ObjectId>1663</ObjectId>
@@ -6436,7 +6436,7 @@ true posixrules
     <schema id="262" parent="2" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>120006</IntrospectionStateNumber>
+      <IntrospectionStateNumber>289003</IntrospectionStateNumber>
       <ObjectId>2200</ObjectId>
       <StateNumber>527</StateNumber>
       <OwnerName>egormelnikov</OwnerName>
@@ -6446,14 +6446,14 @@ true posixrules
       <PgRoutineKind>pg-trigger</PgRoutineKind>
       <ResultsDefinition>trigger</ResultsDefinition>
       <Rows>0.0</Rows>
-      <SourceTextLength>602</SourceTextLength>
-      <StateNumber>119975</StateNumber>
+      <SourceTextLength>689</SourceTextLength>
+      <StateNumber>289000</StateNumber>
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>egormelnikov</OwnerName>
     </routine>
     <table id="264" parent="262" name="positions">
       <ObjectId>16390</ObjectId>
-      <StateNumber>119742</StateNumber>
+      <StateNumber>193645</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>egormelnikov</OwnerName>
     </table>
@@ -6498,19 +6498,37 @@ true posixrules
       <StateNumber>119742</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <index id="272" parent="264" name="positions_pkey">
-      <ClassIds>3126</ClassIds>
+    <column id="272" parent="264" name="user_id">
+      <DataType>varchar(100)|0s</DataType>
+      <Position>7</Position>
+      <StateNumber>193625</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="273" parent="264" name="stop_loss">
+      <DataType>double precision|0s</DataType>
+      <Position>8</Position>
+      <StateNumber>193644</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="274" parent="264" name="take_profit">
+      <DataType>double precision|0s</DataType>
+      <Position>9</Position>
+      <StateNumber>193645</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <index id="275" parent="264" name="positions_pkey">
       <ColNames>id_</ColNames>
-      <CollationIds>100</CollationIds>
-      <CollationNames>default</CollationNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16395</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>766</StateNumber>
+      <StateNumber>193625</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
+      <CollationNames>default</CollationNames>
+      <CollationIds>100</CollationIds>
+      <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <key id="273" parent="264" name="positions_pkey">
+    <key id="276" parent="264" name="positions_pkey">
       <ColNames>id_</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16396</ObjectId>
@@ -6518,7 +6536,7 @@ true posixrules
       <StateNumber>766</StateNumber>
       <UnderlyingIndexId>16395</UnderlyingIndexId>
     </key>
-    <trigger id="274" parent="264" name="insert_position_notify">
+    <trigger id="277" parent="264" name="insert_position_notify">
       <CallArgs>&apos;positions&apos;</CallArgs>
       <Events>IU</Events>
       <ObjectId>16498</ObjectId>

@@ -4,7 +4,23 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="de5289c4-a6f8-49a9-b0a4-0e4d6ac88de9" name="Changes" comment="v1.14 (contexts/log/switch true/false)" />
+    <list default="true" id="de5289c4-a6f8-49a9-b0a4-0e4d6ac88de9" name="Changes" comment="v1.14 (contexts/log/switch true/false)">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/d175c382-fba5-40ea-b2df-ebe33921428d.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/d175c382-fba5-40ea-b2df-ebe33921428d.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/d175c382-fba5-40ea-b2df-ebe33921428d/storage_v2/_src_/database/egormelnikovdb.JrqMgA/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/d175c382-fba5-40ea-b2df-ebe33921428d/storage_v2/_src_/database/egormelnikovdb.JrqMgA/schema/public.abK9xQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/d175c382-fba5-40ea-b2df-ebe33921428d/storage_v2/_src_/database/egormelnikovdb.JrqMgA/schema/public.abK9xQ.zip" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/d175c382-fba5-40ea-b2df-ebe33921428d/storage_v2/_src_/database/egormelnikovdb.JrqMgA/schema/public.abK9xQ.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/internal/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/internal/model/model.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/internal/server/priceServer.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/internal/server/priceServer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/position_service/internal/model/transactionModel.go" beforeDir="false" afterPath="$PROJECT_DIR$/position_service/internal/model/transactionModel.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/position_service/internal/repository/newRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/position_service/internal/repository/newRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/position_service/internal/repository/postgresTransaction.go" beforeDir="false" afterPath="$PROJECT_DIR$/position_service/internal/repository/postgresTransaction.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/position_service/internal/service/transactionService.go" beforeDir="false" afterPath="$PROJECT_DIR$/position_service/internal/service/transactionService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/position_service/internal/sql/V1_1_0_create_positions_table.sql" beforeDir="false" afterPath="$PROJECT_DIR$/position_service/internal/sql/V1_1_0_create_positions_table.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/position_service/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/position_service/main.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,8 +54,8 @@
     <option name="indexEntireGoPath" value="false" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file:///snap/go/9360/src/runtime/panic.go" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/../../../pkg/mod/github.com/!eg!meln/broker/price_service@v0.0.0-20220330140003-f5d9e94b8d60/internal/server/priceServer.go" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file:///snap/go/9360/src/runtime/panic.go" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -50,22 +66,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="DatabaseDriversLRU" value="postgresql" />
-    <property name="DefaultGoTemplateProperty" value="Go File" />
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="go.format.on.save.advertiser.fired" value="true" />
-    <property name="go.formatter.settings.were.checked" value="true" />
-    <property name="go.import.settings.migrated" value="true" />
-    <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
-    <property name="go.sdk.automatically.set" value="true" />
-    <property name="go.watchers.conflict.with.on.save.actions.check.performed" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="service.view.auto.scroll.to.source" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
-  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;configurable..is.expanded&quot;: &quot;false&quot;,
+    &quot;configurable.GoLibrariesConfigurable.is.expanded&quot;: &quot;true&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/egormelnikov&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.goide.configuration.GoLibrariesConfigurableProvider&quot;
+  }
+}</component>
   <component name="ReaderModeSettings">
     <option name="enabled" value="false" />
   </component>
@@ -186,7 +201,7 @@
     <option name="LAST_COMMIT_MESSAGE" value="v1.14 (contexts/log/switch true/false)" />
   </component>
   <component name="VgoProject">
-    <integration-enabled>true</integration-enabled>
+    <settings-migrated>true</settings-migrated>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -212,24 +227,9 @@
           <option name="timeStamp" value="11" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/position_service/main.go</url>
-          <line>47</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/position_service/main.go</url>
-          <line>27</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/price_generator/internal/service/generate/serviceGenerator.go</url>
           <line>50</line>
           <option name="timeStamp" value="18" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/position_service/internal/service/transactionService.go</url>
-          <line>53</line>
-          <option name="timeStamp" value="19" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

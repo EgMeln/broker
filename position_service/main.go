@@ -44,11 +44,10 @@ func main() {
 		"Akron":    {},
 	}
 	connectionPriceServer := connectPriceServer()
-
 	go subscribePrices(ctx, "Aeroflot", connectionPriceServer, mu, transactionMap, positionMap)
 	go subscribePrices(ctx, "ALROSA", connectionPriceServer, mu, transactionMap, positionMap)
 	go subscribePrices(ctx, "Akron", connectionPriceServer, mu, transactionMap, positionMap)
-	transactionService := service.NewPositionService(ctx, &repository.PostgresPrice{PoolPrice: pool}, transactionMap, mu, positionMap, pool)
+	transactionService := service.NewPositionService(ctx, &repository.PostgresPrice{PoolPrice: pool}, positionMap, pool, mu)
 
 	transactionServer := server.NewPositionServer(*transactionService, mu, transactionMap)
 
