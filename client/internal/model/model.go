@@ -28,4 +28,6 @@ type Transaction struct {
 	IsBay      bool
 	Symbol     string
 	PriceClose float64
+	StopLoss   float64
+	TakeProfit float64
 }

@@ -3,18 +3,18 @@ version: "3"
 services:
 
   price_generator:
-    image: price_generator
+    image: price_generator:latest
     environment:
       REDIS_ADDR: "redis:6379"
 
   price_service:
-    image: price_service
+    image: price_service:latest
     environment:
       REDIS_ADDR: "redis:6379"
     ports:
       - "8082:8082"
   position_service:
-    image: position_service
+    image: position_service:latest
     ports:
       - "8083:8083"
     depends_on:

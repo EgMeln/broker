@@ -3,17 +3,17 @@ package repository
 import (
 	"context"
 	"fmt"
-	"os/exec"
-
 	"github.com/EgMeln/broker/position_service/internal/model"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
+	"os/exec"
 )
 
 // OpenPosition function to inserting a position into postgres db
 func (rep *PostgresPrice) OpenPosition(ctx context.Context, trans *model.Transaction, bay string) (*uuid.UUID, error) {
-	_, err := rep.PoolPrice.Exec(ctx, "INSERT INTO positions(id_,price_open,is_bay,symbol,price_close,bay_by) VALUES ($1,$2,$3,$4,$5,$6)",
-		trans.ID, trans.PriceOpen, true, trans.Symbol, trans.PriceClose, bay)
+	_, err := rep.PoolPrice.Exec(ctx, "INSERT INTO positions(id_,price_open,is_bay,symbol,price_close,bay_by,user_id,stop_loss,take_profit)"+
+		" VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+		trans.ID, trans.PriceOpen, true, trans.Symbol, trans.PriceClose, bay, "1b9c7a90-2113-4d72-a8a5-20dc6c33b7c2", 10, 50)
 	if err != nil {
 		log.Errorf("can't insert position %v", err)
 		return &trans.ID, err
