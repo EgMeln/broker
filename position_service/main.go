@@ -43,11 +43,12 @@ func main() {
 		"ALROSA":   {},
 		"Akron":    {},
 	}
+	ch := make(chan *model.GeneratedPrice)
 	connectionPriceServer := connectPriceServer()
-	go subscribePrices(ctx, "Aeroflot", connectionPriceServer, mu, transactionMap, positionMap)
-	go subscribePrices(ctx, "ALROSA", connectionPriceServer, mu, transactionMap, positionMap)
-	go subscribePrices(ctx, "Akron", connectionPriceServer, mu, transactionMap, positionMap)
-	transactionService := service.NewPositionService(ctx, &repository.PostgresPrice{PoolPrice: pool}, positionMap, pool, mu)
+	go subscribePrices(ctx, "Aeroflot", connectionPriceServer, mu, transactionMap, positionMap, ch)
+	go subscribePrices(ctx, "ALROSA", connectionPriceServer, mu, transactionMap, positionMap, ch)
+	go subscribePrices(ctx, "Akron", connectionPriceServer, mu, transactionMap, positionMap, ch)
+	transactionService := service.NewPositionService(ctx, &repository.PostgresPrice{PoolPrice: pool}, positionMap, pool, mu, ch)
 
 	transactionServer := server.NewPositionServer(*transactionService, mu, transactionMap)
 
@@ -100,7 +101,7 @@ func runGRPC(recServer protocol.PositionServiceServer) error {
 }
 
 func subscribePrices(ctx context.Context, symbol string, client protocolPrice.PriceServiceClient, mu *sync.RWMutex, transactionMap map[string]*model.GeneratedPrice,
-	positionMap map[string]map[string]*chan *model.GeneratedPrice) {
+	positionMap map[string]map[string]*chan *model.GeneratedPrice, ch chan *model.GeneratedPrice) {
 	req := protocolPrice.GetRequest{Symbol: symbol}
 	i := 0
 	t := time.Now()
@@ -126,6 +127,7 @@ func subscribePrices(ctx context.Context, symbol string, client protocolPrice.Pr
 		transactionMap[cur.Symbol] = cur
 		for _, v := range positionMap[cur.Symbol] {
 			*v <- cur
+			ch <- cur
 		}
 		mu.Unlock()
 

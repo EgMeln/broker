@@ -36,12 +36,12 @@ func main() {
 	//posClient.ClosePositionAsk(ctx, id, "Aeroflot")
 	t := time.Now()
 	var array []string
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 1000; i++ {
 		id := posClient.OpenPositionAsk(ctx, "Aeroflot")
 		array = append(array, id)
 		//time.Sleep(50 * time.Millisecond)
 	}
-	time.Sleep(10 * time.Second)
+	time.Sleep(1 * time.Minute)
 	for _, id := range array {
 		posClient.ClosePositionAsk(ctx, id, "Aeroflot")
 	}

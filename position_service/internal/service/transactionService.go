@@ -20,11 +20,12 @@ type PositionService struct {
 	mu             *sync.RWMutex
 	positionMap    map[string]map[string]*chan *model.GeneratedPrice
 	transactionMap map[string]*model.Transaction
+	ch             chan *model.GeneratedPrice
 }
 
 // NewPositionService used for setting position services
-func NewPositionService(ctx context.Context, rep *repository.PostgresPrice, pos map[string]map[string]*chan *model.GeneratedPrice, pool *pgxpool.Pool, mute *sync.RWMutex) *PositionService {
-	PosService := PositionService{rep: rep, mu: mute, positionMap: pos, pool: pool, transactionMap: make(map[string]*model.Transaction)}
+func NewPositionService(ctx context.Context, rep *repository.PostgresPrice, pos map[string]map[string]*chan *model.GeneratedPrice, pool *pgxpool.Pool, mute *sync.RWMutex, ch chan *model.GeneratedPrice) *PositionService {
+	PosService := PositionService{rep: rep, mu: mute, positionMap: pos, pool: pool, transactionMap: make(map[string]*model.Transaction), ch: ch}
 	go PosService.waitForNotification(ctx)
 	return &PosService
 }
@@ -44,7 +45,6 @@ func (src *PositionService) getProfitByAsk(ctx context.Context, ch chan *model.G
 		price, ok := <-ch
 		if ok {
 			log.Infof("For position %v profit if close: %v", trans.ID, price.Ask-trans.PriceOpen)
-			go src.SystemStop(ctx, price, trans)
 		} else {
 			log.Infof("Position with id %v close", trans.ID)
 			return
@@ -56,7 +56,6 @@ func (src *PositionService) getProfitByBid(ctx context.Context, ch chan *model.G
 		price, ok := <-ch
 		if ok {
 			log.Infof("For position %v profit if close: %v", trans.ID, price.Bid-trans.PriceOpen)
-			go src.SystemStop(ctx, price, trans)
 		} else {
 			log.Infof("Position with id %v close", trans.ID)
 			return
@@ -90,6 +89,7 @@ func (src *PositionService) waitForNotification(ctx context.Context) {
 			src.mu.Lock()
 			src.positionMap[position.Symbol][position.ID.String()] = &ch
 			src.transactionMap[position.ID.String()] = &position
+			go src.SystemStop(ctx, src.ch, &position)
 			src.mu.Unlock()
 			if position.BayBy == "Ask" {
 				go src.getProfitByAsk(ctx, ch, &position)
@@ -98,41 +98,49 @@ func (src *PositionService) waitForNotification(ctx context.Context) {
 			}
 		} else {
 			src.mu.Lock()
-			close(*src.positionMap[position.Symbol][position.ID.String()])
-			delete(src.positionMap[position.Symbol], position.ID.String())
-			delete(src.transactionMap, position.ID.String())
+			if src.positionMap[position.Symbol][position.ID.String()] != nil {
+				close(*src.positionMap[position.Symbol][position.ID.String()])
+				delete(src.positionMap[position.Symbol], position.ID.String())
+				delete(src.transactionMap, position.ID.String())
+			}
 			src.mu.Unlock()
 		}
 	}
 }
-func (src *PositionService) SystemStop(ctx context.Context, update *model.GeneratedPrice, transaction *model.Transaction) {
-	src.mu.RLock()
-	if transaction.Symbol == update.Symbol {
-		if stopLoss(update, transaction) || takeProfit(update, transaction) {
-			var stopPrice float64
-			if transaction.BayBy == "Ask" {
-				stopPrice = update.Ask
-			} else if transaction.BayBy == "Bid" {
-				stopPrice = update.Bid
+func (src *PositionService) SystemStop(ctx context.Context, ch chan *model.GeneratedPrice, transaction *model.Transaction) {
+	for {
+		select {
+		case newPrice := <-ch:
+			if newPrice.Symbol == transaction.Symbol {
+				src.mu.Lock()
+				if stopLoss(newPrice, transaction) || takeProfit(newPrice, transaction) {
+					var stopPrice float64
+					if transaction.BayBy == "Ask" {
+						stopPrice = newPrice.Ask
+					} else if transaction.BayBy == "Bid" {
+						stopPrice = newPrice.Bid
+					}
+					profit, err := src.ClosePosition(ctx, &stopPrice, &transaction.ID)
+					if err != nil {
+						log.Errorf("close positins error")
+					}
+					log.Info("profit ", profit)
+				}
+
+				positionID, priceClose, ifClose := src.marginLiquidation(newPrice)
+				if ifClose {
+					profit, err := src.ClosePosition(ctx, &priceClose, &positionID)
+					if err != nil {
+						log.Errorf("close positins error")
+					}
+					log.Info("profit ", profit)
+				}
+				src.mu.Unlock()
 			}
-			profit, err := src.ClosePosition(ctx, &stopPrice, &transaction.ID)
-			if err != nil {
-				log.Errorf("close positins error")
-			}
-			log.Info("profit ", profit)
+		case <-ctx.Done():
+			return
 		}
 	}
-	src.mu.RUnlock()
-	src.mu.Lock()
-	positionID, priceClose, ifClose := src.marginLiquidation(update)
-	if ifClose {
-		profit, err := src.ClosePosition(ctx, &priceClose, &positionID)
-		if err != nil {
-			log.Errorf("close positins error")
-		}
-		log.Info("profit ", profit)
-	}
-	src.mu.Unlock()
 }
 func (src *PositionService) marginLiquidation(pos *model.GeneratedPrice) (uuid.UUID, float64, bool) {
 	var balance float64
